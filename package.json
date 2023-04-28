@@ -1,35 +1,36 @@
 {
-  "name": "scraptris",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@chakra-ui/next-js": "^2.1.3",
-    "@chakra-ui/react": "^2.6.0",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
-    "@prisma/client": "^4.13.0",
-    "@types/node": "18.16.2",
-    "@types/react": "18.2.0",
-    "@types/react-dom": "18.2.1",
-    "currency.js": "^2.0.4",
-    "eslint": "8.39.0",
-    "eslint-config-next": "13.3.1",
-    "framer-motion": "^10.12.4",
-    "leaflet": "^1.9.3",
-    "next": "13.3.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-leaflet": "^4.2.1",
-    "typescript": "5.0.4"
-  },
-  "devDependencies": {
-    "@types/leaflet": "^1.9.3",
-    "prisma": "^4.13.0"
-  }
+    "name": "scraptris",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "vercel-build": "prisma generate && next build"
+    },
+    "dependencies": {
+        "@chakra-ui/next-js": "^2.1.3",
+        "@chakra-ui/react": "^2.6.0",
+        "@emotion/react": "^11.10.6",
+        "@emotion/styled": "^11.10.6",
+        "@prisma/client": "^4.13.0",
+        "@types/node": "18.16.2",
+        "@types/react": "18.2.0",
+        "@types/react-dom": "18.2.1",
+        "currency.js": "^2.0.4",
+        "eslint": "8.39.0",
+        "eslint-config-next": "13.3.1",
+        "framer-motion": "^10.12.4",
+        "leaflet": "^1.9.3",
+        "next": "13.3.1",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-leaflet": "^4.2.1",
+        "typescript": "5.0.4"
+    },
+    "devDependencies": {
+        "@types/leaflet": "^1.9.3",
+        "prisma": "^4.13.0"
+    }
 }
