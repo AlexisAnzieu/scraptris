@@ -74,29 +74,31 @@ export async function GET() {
     return new Response(
         await Promise.allSettled(
             allProperties.map((property: any) => {
-                return prisma.property.upsert({
-                    where: {
-                        MlsNumber: property.MlsNumber,
-                    },
-                    create: {
-                        longitude: +property.longitude,
-                        latitude: +property.latitude,
-                        MlsNumber: property.MlsNumber,
-                        picture: property.image,
-                        prices: {
-                            create: {
-                                amount: currency(property.price).value,
+                return prisma.property
+                    .upsert({
+                        where: {
+                            MlsNumber: property.MlsNumber,
+                        },
+                        create: {
+                            longitude: +property.longitude,
+                            latitude: +property.latitude,
+                            MlsNumber: property.MlsNumber,
+                            picture: property.image,
+                            prices: {
+                                create: {
+                                    amount: currency(property.price).value,
+                                },
                             },
                         },
-                    },
-                    update: {
-                        prices: {
-                            create: {
-                                amount: currency(property.price).value,
+                        update: {
+                            prices: {
+                                create: {
+                                    amount: currency(property.price).value,
+                                },
                             },
                         },
-                    },
-                });
+                    })
+                    .then(() => prisma.$disconnect());
             })
         ).then((res) => JSON.stringify(res))
     );
