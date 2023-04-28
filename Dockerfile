@@ -1,5 +1,6 @@
 FROM node:16-slim
 
+COPY . .
 
 RUN npm install --silent 
 RUN npm run vercel-build
