@@ -44,6 +44,7 @@ const fetchMLS = async (
 };
 
 export async function GET() {
+    const allProperties = [];
     for (const bucket of PRICE_BUCKET) {
         const totalPage = await fetchMLS(1, bucket).then(
             (res) => res.Paging.TotalPages
@@ -51,38 +52,52 @@ export async function GET() {
 
         for (let page = 1; page <= totalPage; page++) {
             const properties = await fetchMLS(page, bucket);
-            console.log({ page, bucket });
-            await Promise.all(
-                properties!.Results!.map((property: any) => {
-                    console.log(properties);
-                    return prisma.property.upsert({
-                        where: {
-                            MlsNumber: property.MlsNumber,
-                        },
-                        create: {
-                            longitude: +property.Property.Address.Longitude,
-                            latitude: +property.Property.Address.Latitude,
-                            MlsNumber: property.MlsNumber,
-                            picture: property.Property.Photo[0].HighResPath,
-                            prices: {
-                                create: {
-                                    amount: currency(property.Property.price)
-                                        .value,
-                                },
-                            },
-                        },
-                        update: {
-                            prices: {
-                                create: {
-                                    amount: currency(property.Property.price)
-                                        .value,
-                                },
-                            },
-                        },
-                    });
-                })
-            );
+            const data = properties!.Results!.map((item: any) => ({
+                id: item.Id,
+                MlsNumber: item.MlsNumber,
+                price: item.Property.Price,
+                address: item.Property.Address.AddressText,
+                city: item.Property.Address.City,
+                province: item.Property.Address.Province,
+                postalCode: item.Property.Address.PostalCode,
+                latitude: item.Property.Address.Latitude,
+                longitude: item.Property.Address.Longitude,
+                bedrooms: item.Building.Bedrooms,
+                type: item.Building.Type,
+                centrisUrl: `https://www.centris.ca/fr/eeee/${item.MlsNumber}`,
+                image: item.Property.Photo[0].HighResPath,
+            }));
+            allProperties.push(...data);
         }
     }
-    return new Response("done");
+
+    return new Response(
+        await Promise.allSettled(
+            allProperties.map((property: any) => {
+                return prisma.property.upsert({
+                    where: {
+                        MlsNumber: property.MlsNumber,
+                    },
+                    create: {
+                        longitude: +property.longitude,
+                        latitude: +property.latitude,
+                        MlsNumber: property.MlsNumber,
+                        picture: property.image,
+                        prices: {
+                            create: {
+                                amount: currency(property.price).value,
+                            },
+                        },
+                    },
+                    update: {
+                        prices: {
+                            create: {
+                                amount: currency(property.price).value,
+                            },
+                        },
+                    },
+                });
+            })
+        ).then((res) => JSON.stringify(res))
+    );
 }
