@@ -51,8 +51,10 @@ export async function GET() {
 
         for (let page = 1; page <= totalPage; page++) {
             const properties = await fetchMLS(page, bucket);
+            console.log({ page, bucket });
             await Promise.all(
                 properties!.Results!.map((property: any) => {
+                    console.log(properties);
                     return prisma.property.upsert({
                         where: {
                             MlsNumber: property.MlsNumber,
