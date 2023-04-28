@@ -1,6 +1,27 @@
 import { Properties } from "@/types/Properties";
+import { PrismaClient } from "@prisma/client";
+import currency from "currency.js";
+const prisma = new PrismaClient();
 
-const fectchMLS = async (page = 1): Promise<Properties> => {
+const PRICE_BUCKET = [
+    {
+        min: 450000,
+        max: 500000,
+    },
+    {
+        min: 500000,
+        max: 600000,
+    },
+    {
+        min: 600000,
+        max: 650000,
+    },
+];
+
+const fetchMLS = async (
+    page = 1,
+    priceBucket: { min: number; max: number }
+): Promise<Properties> => {
     return fetch("https://api2.realtor.ca/Listing.svc/PropertySearch_Post", {
         headers: {
             accept: "*/*",
@@ -17,35 +38,49 @@ const fectchMLS = async (page = 1): Promise<Properties> => {
             Referer: "https://www.realtor.ca/",
             "Referrer-Policy": "strict-origin-when-cross-origin",
         },
-        body: `ZoomLevel=14&LatitudeMax=45.55318&LongitudeMax=-73.53407&LatitudeMin=45.50333&LongitudeMin=-73.63354&Sort=6-D&PropertyTypeGroupID=1&PropertySearchTypeId=0&TransactionTypeId=2&PriceMin=450000&PriceMax=700000&BedRange=1-0&Currency=CAD&RecordsPerPage=40&ApplicationId=1&CultureId=2&Version=7.0&CurrentPage=${page}`,
+        body: `ZoomLevel=14&LatitudeMax=45.55318&LongitudeMax=-73.53407&LatitudeMin=45.50333&LongitudeMin=-73.63354&Sort=6-D&PropertyTypeGroupID=1&PropertySearchTypeId=0&TransactionTypeId=2&PriceMin=${priceBucket.min}&PriceMax=${priceBucket.max}&BedRange=1-0&Currency=CAD&RecordsPerPage=80&ApplicationId=1&CultureId=2&Version=7.0&CurrentPage=${page}`,
         method: "POST",
     }).then((res) => res.json());
 };
 
-export async function GET(request: Request) {
-    const allProperties = [];
-    const totalPage = await fectchMLS().then((res) => res.Paging.TotalPages);
-    return new Response(JSON.stringify(await fectchMLS()));
+export async function GET() {
+    for (const bucket of PRICE_BUCKET) {
+        const totalPage = await fetchMLS(1, bucket).then(
+            (res) => res.Paging.TotalPages
+        );
 
-    for (let i = 1; i <= 3; i++) {
-        const properties = await fectchMLS(i);
-        console.log(properties);
-        const data = properties!.Results!.map((item: any) => ({
-            id: item.Id,
-            MlsNumber: item.MlsNumber,
-            price: item.Property.Price,
-            address: item.Property.Address.AddressText,
-            city: item.Property.Address.City,
-            province: item.Property.Address.Province,
-            postalCode: item.Property.Address.PostalCode,
-            latitude: item.Property.Address.Latitude,
-            longitude: item.Property.Address.Longitude,
-            bedrooms: item.Building.Bedrooms,
-            type: item.Building.Type,
-            centrisUrl: `https://www.centris.ca/fr/eeee/${item.MlsNumber}`,
-            image: item.Property.Photo[0].HighResPath,
-        }));
-        allProperties.push(...data);
+        for (let page = 1; page <= totalPage; page++) {
+            const properties = await fetchMLS(page, bucket);
+            await Promise.all(
+                properties!.Results!.map((property: any) => {
+                    return prisma.property.upsert({
+                        where: {
+                            MlsNumber: property.MlsNumber,
+                        },
+                        create: {
+                            longitude: +property.Property.Address.Longitude,
+                            latitude: +property.Property.Address.Latitude,
+                            MlsNumber: property.MlsNumber,
+                            picture: property.Property.Photo[0].HighResPath,
+                            prices: {
+                                create: {
+                                    amount: currency(property.Property.price)
+                                        .value,
+                                },
+                            },
+                        },
+                        update: {
+                            prices: {
+                                create: {
+                                    amount: currency(property.Property.price)
+                                        .value,
+                                },
+                            },
+                        },
+                    });
+                })
+            );
+        }
     }
-    return new Response(JSON.stringify(allProperties));
+    return new Response("done");
 }
