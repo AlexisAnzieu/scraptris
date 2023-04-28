@@ -22,7 +22,7 @@ const Markers = ({ properties }: { properties: any }) => {
     );
 };
 
-const MapComponent = (properties: ResultsEntity[]) => {
+const MapComponent = (properties: any) => {
     return (
         <MapContainer
             center={MONTREAL_LOCATION}
