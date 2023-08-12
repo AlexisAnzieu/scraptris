@@ -1,14 +1,11 @@
 import { ClientComponent } from "./components/ClientComponent";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
 
 export default async function Home() {
-    const properties = await prisma.property.findMany({
-        select: {
-            latitude: true,
-            longitude: true,
-        },
-    });
+    const properties: any = await fetch(
+        "http://vps-936fc4fa.vps.ovh.net:3500/properties"
+    );
 
-    return <ClientComponent properties={properties} />;
+    const res = await properties.json();
+
+    return <ClientComponent properties={res} />;
 }
