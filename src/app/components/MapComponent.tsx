@@ -7,7 +7,6 @@ L.Icon.Default.imagePath = "leaflet/";
 const MONTREAL_LOCATION = { lat: 45.524184, lng: -73.581435 };
 
 const Markers = ({ properties }: { properties: any }) => {
-    console.log("properties", properties);
     return (
         <>
             {properties.properties.map((property: any) => (
