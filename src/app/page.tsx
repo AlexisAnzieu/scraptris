@@ -1,11 +1,12 @@
+import { Properties } from "@/types/Properties";
 import { ClientComponent } from "./components/ClientComponent";
 
 export default async function Home() {
-    const properties: any = await fetch(
+    const result: any = await fetch(
         "http://vps-936fc4fa.vps.ovh.net:3500/properties"
     );
 
-    const res = await properties.json();
+    const properties: Properties[] = await result.json();
 
-    return <ClientComponent properties={res} />;
+    return <ClientComponent properties={properties} />;
 }

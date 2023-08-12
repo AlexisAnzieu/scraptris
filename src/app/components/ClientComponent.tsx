@@ -1,16 +1,16 @@
 "use client";
 
+import { Properties } from "csstype";
 import dynamic from "next/dynamic";
-import { ResultsEntity } from "@/types/Properties";
 
 const MapWithNoSSR = dynamic(() => import("./MapComponent"), {
     ssr: false,
 });
 
-export function ClientComponent(props: { properties: any[] }) {
+export function ClientComponent({ properties }: { properties: Properties[] }) {
     return (
         <div>
-            <MapWithNoSSR properties={props.properties} />
+            <MapWithNoSSR properties={properties} />
         </div>
     );
 }
