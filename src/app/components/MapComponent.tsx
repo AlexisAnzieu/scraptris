@@ -7,7 +7,7 @@ import { Chart } from "react-chartjs-2";
 
 const MONTREAL_LOCATION = { lat: 45.524184, lng: -73.581435 };
 
-type Properties = {
+export type Properties = {
     MlsNumber: string;
     latitude: string;
     longitude: string;
@@ -18,11 +18,10 @@ type Properties = {
     }[];
 };
 
-const Markers = ({ properties }: { properties: any }) => {
-    console.log(properties);
+const Markers = ({ properties }: { properties: Properties[] }) => {
     return (
         <>
-            {properties.properties.map((property: Properties) => (
+            {properties.map((property: Properties) => (
                 <Marker
                     key={`marker-${property.MlsNumber}`}
                     position={L.latLng(+property.latitude, +property.longitude)}
@@ -53,7 +52,7 @@ const Markers = ({ properties }: { properties: any }) => {
     );
 };
 
-const MapComponent = (properties: any) => {
+const MapComponent = ({ properties }: { properties: Properties[] }) => {
     return (
         <MapContainer
             center={MONTREAL_LOCATION}

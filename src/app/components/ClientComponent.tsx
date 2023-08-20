@@ -1,7 +1,7 @@
 "use client";
 
-import { Properties } from "csstype";
 import dynamic from "next/dynamic";
+import { Properties } from "./MapComponent";
 
 const MapWithNoSSR = dynamic(() => import("./MapComponent"), {
     ssr: false,

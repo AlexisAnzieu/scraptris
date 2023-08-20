@@ -1,5 +1,5 @@
-import { Properties } from "@/types/Properties";
 import { ClientComponent } from "./components/ClientComponent";
+import { Properties } from "./components/MapComponent";
 
 export default async function Home() {
     const result: any = await fetch(
