@@ -26,9 +26,6 @@ const Markers = ({ properties }: { properties: Properties[] }) => {
     return (
         <>
             {properties.map((property: Properties) => {
-                const priceDate = property.prices?.map((p) =>
-                    getDateOfYear(new Date(p.createdAt))
-                );
                 const prices = property.prices?.map((p) => p.amount);
 
                 return (
@@ -46,7 +43,11 @@ const Markers = ({ properties }: { properties: Properties[] }) => {
                                 width={"100%"}
                                 type="line"
                                 data={{
-                                    labels: priceDate,
+                                    labels: property.prices
+                                        .sort(
+                                            (a, b) => a.createdAt - b.createdAt
+                                        )
+                                        .map((p) => p.createdAt),
                                     datasets: [
                                         {
                                             backgroundColor: "#dd6b20",
