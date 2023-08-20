@@ -25,36 +25,43 @@ export type Properties = {
 const Markers = ({ properties }: { properties: Properties[] }) => {
     return (
         <>
-            {properties.map((property: Properties) => (
-                <Marker
-                    key={`marker-${property.MlsNumber}`}
-                    position={L.latLng(+property.latitude, +property.longitude)}
-                >
-                    <Popup minWidth={300}>
-                        <img src={property.picture} />
-                        <Chart
-                            width={"100%"}
-                            type="line"
-                            data={{
-                                labels: property.prices?.map((p) =>
-                                    getDateOfYear(new Date(p.createdAt))
-                                ),
-                                datasets: [
-                                    {
-                                        backgroundColor: "#dd6b20",
-                                        fill: true,
-                                        borderColor: "#dd6b20",
-                                        label: "Prix",
-                                        data: property.prices?.map(
-                                            (p) => p.amount
-                                        ),
-                                    },
-                                ],
-                            }}
-                        />
-                    </Popup>
-                </Marker>
-            ))}
+            {properties.map((property: Properties) => {
+                const priceDate = property.prices?.map((p) =>
+                    getDateOfYear(new Date(p.createdAt))
+                );
+                const prices = property.prices?.map((p) => p.amount);
+
+                return (
+                    <Marker
+                        key={`marker-${property.MlsNumber}`}
+                        position={L.latLng(
+                            +property.latitude,
+                            +property.longitude
+                        )}
+                    >
+                        <Popup minWidth={300}>
+                            <img src={property.picture} />
+                            Current value: {prices?.[0]}
+                            <Chart
+                                width={"100%"}
+                                type="line"
+                                data={{
+                                    labels: priceDate,
+                                    datasets: [
+                                        {
+                                            backgroundColor: "#dd6b20",
+                                            fill: true,
+                                            borderColor: "#dd6b20",
+                                            label: "Prix",
+                                            data: prices,
+                                        },
+                                    ],
+                                }}
+                            />
+                        </Popup>
+                    </Marker>
+                );
+            })}
         </>
     );
 };
