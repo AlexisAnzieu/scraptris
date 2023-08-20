@@ -7,6 +7,7 @@ export default async function Home() {
     );
 
     const properties: Properties[] = await result.json();
+    console.log(properties);
 
     return <ClientComponent properties={properties} />;
 }

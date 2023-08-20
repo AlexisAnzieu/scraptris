@@ -34,7 +34,7 @@ const Markers = ({ properties }: { properties: Properties[] }) => {
                         <Chart
                             type="line"
                             data={{
-                                labels: property.prices.map((p) =>
+                                labels: property.prices?.map((p) =>
                                     getDateOfYear(new Date(p.createdAt))
                                 ),
                                 datasets: [
@@ -43,7 +43,7 @@ const Markers = ({ properties }: { properties: Properties[] }) => {
                                         fill: true,
                                         borderColor: "#dd6b20",
                                         label: "Prix",
-                                        data: property.prices.map(
+                                        data: property.prices?.map(
                                             (p) => p.amount
                                         ),
                                     },
