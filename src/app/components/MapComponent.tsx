@@ -7,6 +7,9 @@ import { Chart } from "react-chartjs-2";
 
 const MONTREAL_LOCATION = { lat: 45.524184, lng: -73.581435 };
 
+const getDateOfYear = (date: Date) =>
+    Math.floor((date.getTime() - +new Date(date.getFullYear(), 0, 0)) / 864e5);
+
 export type Properties = {
     MlsNumber: string;
     latitude: string;
@@ -26,12 +29,14 @@ const Markers = ({ properties }: { properties: Properties[] }) => {
                     key={`marker-${property.MlsNumber}`}
                     position={L.latLng(+property.latitude, +property.longitude)}
                 >
-                    <Popup>
-                        {property.prices.map((p) => p.amount).join(" ")}
+                    <Popup maxWidth={100} maxHeight={400}>
+                        {property.MlsNumber}
                         <Chart
                             type="line"
                             data={{
-                                labels: property.prices.map((p) => p.createdAt),
+                                labels: property.prices.map((p) =>
+                                    getDateOfYear(new Date(p.createdAt))
+                                ),
                                 datasets: [
                                     {
                                         backgroundColor: "#dd6b20",
