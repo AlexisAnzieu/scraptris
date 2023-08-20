@@ -14,6 +14,7 @@ export type Properties = {
     MlsNumber: string;
     latitude: string;
     longitude: string;
+    picture: string;
     prices: {
         createdAt: Date;
         id: string;
@@ -29,9 +30,10 @@ const Markers = ({ properties }: { properties: Properties[] }) => {
                     key={`marker-${property.MlsNumber}`}
                     position={L.latLng(+property.latitude, +property.longitude)}
                 >
-                    <Popup maxWidth={100} maxHeight={400}>
-                        {property.MlsNumber}
+                    <Popup minWidth={300}>
+                        <img src={property.picture} />
                         <Chart
+                            width={"100%"}
                             type="line"
                             data={{
                                 labels: property.prices?.map((p) =>
