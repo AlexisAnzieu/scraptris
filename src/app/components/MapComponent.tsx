@@ -43,11 +43,9 @@ const Markers = ({ properties }: { properties: Properties[] }) => {
                                 width={"100%"}
                                 type="line"
                                 data={{
-                                    labels: property.prices
-                                        .sort(
-                                            (a, b) => a.createdAt - b.createdAt
-                                        )
-                                        .map((p) => p.createdAt),
+                                    labels: property.prices.map(
+                                        (p) => p.createdAt
+                                    ),
                                     datasets: [
                                         {
                                             backgroundColor: "#dd6b20",
