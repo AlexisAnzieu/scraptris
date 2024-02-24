@@ -34,14 +34,17 @@ export default function Home({
           href={`https://www.centris.ca/en/houses~for-sale~plaisance/${25581849}?uc=0`}
           target="_blank"
         >
-          <Button>Voir l'annonce sur centris</Button>
+          <Button>{"Voir l'annonce sur centris"}</Button>
         </a>
       </Box>{" "}
       Ajoutée le{" "}
-      {new Date(property?.createdAt).toLocaleDateString("fr", dateOptions)}
+      {new Date(property?.createdAt || "").toLocaleDateString(
+        "fr",
+        dateOptions
+      )}
       {!isLoading && (
         <>
-          <img src={property?.picture} />
+          <img src={property?.picture} title="picture" />
           <Chart
             width={"100%"}
             type="line"
