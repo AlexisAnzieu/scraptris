@@ -1,4 +1,5 @@
 import { unstable_noStore as noStore } from "next/cache";
+import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   noStore();
@@ -7,7 +8,10 @@ export async function GET(req: Request) {
   const mlsNumber = searchParams.get("mlsNumber");
 
   if (!mlsNumber) {
-    return Response.json({ error: "mlsNumber is required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "mlsNumber is required" },
+      { status: 400 }
+    );
   }
 
   const res = await fetch(
@@ -15,5 +19,5 @@ export async function GET(req: Request) {
   );
 
   const properties = await res.json();
-  return Response.json(properties);
+  return NextResponse.json(properties);
 }
